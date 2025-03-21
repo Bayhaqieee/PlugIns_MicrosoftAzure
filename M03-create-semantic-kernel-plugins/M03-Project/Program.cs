@@ -27,8 +27,29 @@ OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new()
     FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
 };
 
+// Add the plugins
+kernel.Plugins.AddFromType<FlightBookingPlugin>("FlightBooking");
+kernel.Plugins.AddFromType<CurrencyExchangePlugin>("CurrencyExchange");
+kernel.Plugins.AddFromType<WeatherPlugin>("Weather");
+
+// Select the plugin functions
+KernelFunction searchFlight = kernel.Plugins.GetFunction("FlightBooking", "search_flights");
+KernelFunction convertCurrency = kernel.Plugins.GetFunction("CurrencyExchange", "convert_currency");
+
+// Enable planning
+KernelFunction getWeather = kernel.Plugins.GetFunction("Weather", "get_weather");
+
+PromptExecutionSettings openAIPromptExecutionSettings = new() 
+{
+    FunctionChoiceBehavior = FunctionChoiceBehavior.Required(functions: [getWeather]) 
+};
+
 var history = new ChatHistory();
 history.AddSystemMessage("The year is 2025 and the current month is January");
+AddUserMessage("What is the weather in Tokyo");
+await GetReply();
+
+
 
 // Enter the following code to a prompt to trigger the SearchFlights function:
 // c#
@@ -38,12 +59,6 @@ history.AddSystemMessage("The year is 2025 and the current month is January");
 // await GetReply();
 
 //Output
-// User: Find me a flight to Tokyo on the 19
-// Assistant: I found a flight to Tokyo on January 19th. 
+// User: What is the weather in Tokyo
+// Assistant: The current weather in Tokyo is rainy with a temperature of 18.3°C and a humidity level of 85%.
 
-// - Airline: Air Japan
-// - Price: $1200
-
-// Would you like to book this flight?
-// User: Yes
-// Assistant: Congratulations! Your flight to Tokyo on January 19th with Air Japan has been successfully booked. The total price for the flight is $1200.
