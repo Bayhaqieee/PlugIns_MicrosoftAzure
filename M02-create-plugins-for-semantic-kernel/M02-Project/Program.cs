@@ -28,28 +28,65 @@ class Program
         var kernel = builder.Build();
 
         // Define prompt with placeholders
+        // string prompt = """
+        //     You are a helpful travel guide.
+        //     I'm visiting {{$city}}. {{$background}}. What are some activities I should do today?
+        //     """;
+
+        // string city = "Barcelona";
+        // string background = "I really enjoy art and dance.";
+
+        // // Create a function using the prompt
+        // var pluginFunction = kernel.CreateFunctionFromPrompt(prompt);
+
+        // // Set up arguments using KernelArguments
+        // var arguments = new KernelArguments
+        // {
+        //     ["city"] = city,
+        //     ["background"] = background
+        // };
+
         string prompt = """
-            You are a helpful travel guide.
-            I'm visiting {{$city}}. {{$background}}. What are some activities I should do today?
+            <message role="system">Instructions: Identify the from and to destinations 
+            and dates from the user's request</message>
+
+            <message role="user">Can you give me a list of flights from Seattle to Tokyo? 
+            I want to travel from March 11 to March 18.</message>
+
+            <message role="assistant">
+            Origin: Seattle
+            Destination: Tokyo
+            Depart: 03/11/2025 
+            Return: 03/18/2025
+            </message>
+
+            <message role="user">{{input}}</message>
             """;
+            ```
 
-        string city = "Barcelona";
-        string background = "I really enjoy art and dance.";
+        string input = "I want to travel from June 1 to July 22. I want to go to Greece. I live in Chicago.";
 
-        // Create a function using the prompt
-        var pluginFunction = kernel.CreateFunctionFromPrompt(prompt);
+        // Create the kernel arguments
+        var arguments = new KernelArguments { ["input"] = input };
 
-        // Set up arguments using KernelArguments
-        var arguments = new KernelArguments
+        // Create the prompt template config using handlebars format
+        var templateFactory = new HandlebarsPromptTemplateFactory();
+        var promptTemplateConfig = new PromptTemplateConfig()
         {
-            ["city"] = city,
-            ["background"] = background
+            Template = prompt,
+            TemplateFormat = "handlebars",
+            Name = "FlightPrompt",
         };
 
-        // Invoke the kernel function asynchronously
-        var result = await kernel.InvokeAsync(pluginFunction, arguments);
+        // Invoke the prompt function
+        var function = kernel.CreateFunctionFromPrompt(promptTemplateConfig, templateFactory);
+        var response = await kernel.InvokeAsync(function, arguments);
+        Console.WriteLine(response);
 
-        // Output the result
-        Console.WriteLine(result);
+        // // Invoke the kernel function asynchronously
+        // var result = await kernel.InvokeAsync(pluginFunction, arguments);
+
+        // // Output the result
+        // Console.WriteLine(result);
     }
 }

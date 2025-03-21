@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.42.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Abstractions" Version="1.42.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.42.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.30.0" />
   </ItemGroup>
 
 </Project>
