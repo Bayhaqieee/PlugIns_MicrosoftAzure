@@ -2,6 +2,7 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 using System;
 using System.Threading.Tasks;
 
@@ -21,11 +22,11 @@ class Program
         var deploymentName = config["OpenAI:DeploymentName"] ?? throw new ArgumentNullException("OpenAI:DeploymentName is missing.");
 
         // Create a kernel builder and configure Azure OpenAI
-        var builder = Kernel.CreateBuilder();
-        builder.Services.AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey);
+        // var builder = Kernel.CreateBuilder();
+        // builder.Services.AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey);
 
-        // Build the kernel
-        var kernel = builder.Build();
+        // // Build the kernel
+        // var kernel = builder.Build();
 
         // Define prompt with placeholders
         // string prompt = """
@@ -46,6 +47,23 @@ class Program
         //     ["background"] = background
         // };
 
+        // Define prompt with placeholders
+
+        // // Invoke the kernel function asynchronously
+        // var result = await kernel.InvokeAsync(pluginFunction, arguments);
+
+        // // Output the result
+        // Console.WriteLine(result);
+        
+
+        // 2nd Assignment
+        // Create a kernel with Azure OpenAI chat completion
+        var builder = Kernel.CreateBuilder();
+        builder.Services.AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey);;
+
+        // Build the kernel
+        Kernel kernel = builder.Build();
+
         string prompt = """
             <message role="system">Instructions: Identify the from and to destinations 
             and dates from the user's request</message>
@@ -62,7 +80,6 @@ class Program
 
             <message role="user">{{input}}</message>
             """;
-            ```
 
         string input = "I want to travel from June 1 to July 22. I want to go to Greece. I live in Chicago.";
 
@@ -82,11 +99,14 @@ class Program
         var function = kernel.CreateFunctionFromPrompt(promptTemplateConfig, templateFactory);
         var response = await kernel.InvokeAsync(function, arguments);
         Console.WriteLine(response);
-
-        // // Invoke the kernel function asynchronously
-        // var result = await kernel.InvokeAsync(pluginFunction, arguments);
-
-        // // Output the result
-        // Console.WriteLine(result);
     }
 }
+
+
+
+// 2nd Output
+
+// Origin: Chicago
+// Destination: Greece
+// Depart: 06/01/2025
+// Return: 07/22/2025
