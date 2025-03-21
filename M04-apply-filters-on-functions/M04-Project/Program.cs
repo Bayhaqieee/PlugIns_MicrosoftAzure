@@ -38,12 +38,24 @@ history.AddSystemMessage(prompt);
 AddUserMessage("Can you give me some destination suggestions for a company event? The event budget is $10,000.");
 await SyncPreviousChat();
 
-async Task SyncPreviousChat() 
-{
-    //
-    // Add your code
-    //
+async Task SyncPreviousChat() {
+    kernel.Plugins.AddFromType<PreviousChatPlugin>("PreviousChatPlugin");
+
+    var chatPrompt = @"{{PreviousChatPlugin.get_previous_conversation}}";
+    var promptConfig = new PromptTemplateConfig(chatPrompt)
+    {
+        AllowDangerouslySetContent = true
+    };
+
+    var function = KernelFunctionFactory.CreateFromPrompt(promptConfig);
+    var result = await kernel.InvokeAsync(function, []);
+    Console.WriteLine(result);
 }
+
+var promptConfig = new PromptTemplateConfig(chatPrompt)
+{
+    AllowDangerouslySetContent = true
+};
 
 void GetInput() {
     Console.Write("User: ");
