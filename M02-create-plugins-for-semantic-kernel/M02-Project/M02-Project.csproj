@@ -6,6 +6,7 @@
     <RootNamespace>M02_Project</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>56c12a6b-b476-4b67-a58c-675bab70a7c8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
