@@ -9,6 +9,7 @@ class Program
 {
     static async Task Main()
     {
+        // Not using appsettings.json because it sucks
         var config = new ConfigurationBuilder()
             .AddUserSecrets<Program>()
             .Build();
